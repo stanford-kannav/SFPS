@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SFPS — Developer Console</title>
+<link rel="stylesheet" href="/css/responsive-v13.css">
+<style>
+body{margin:0;background:#f4f7fb;font-family:system-ui,sans-serif;color:#14213d}
+header{background:#fff;padding:16px 22px;display:flex;justify-content:space-between;gap:15px;align-items:center;position:sticky;top:0;z-index:2}
+main{width:min(1280px,calc(100% - 28px));margin:22px auto}.card{background:#fff;border-radius:18px;padding:20px;margin-bottom:16px;box-shadow:0 8px 28px rgba(0,0,0,.07)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}.controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;align-items:end}
+label{display:flex;flex-direction:column;gap:6px}input,select,button{min-height:42px;padding:9px 11px;border-radius:10px;border:1px solid #d6ddea;font:inherit}button{cursor:pointer;background:#244b92;color:#fff;border:0}.danger{background:#a43}.muted{opacity:.65}.item{border:1px solid #e0e5ee;border-radius:12px;padding:12px;margin-top:8px;display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}.badge{padding:4px 8px;border-radius:999px;background:#edf2ff}.section-title{display:flex;justify-content:space-between;align-items:center;gap:10px}
+</style>
+</head>
+<body>
+<header><strong>SFPS • Developer Console</strong><a href="/dashboard.html">Dashboard</a></header>
+<main>
+<section class="card">
+<div class="section-title"><div><h1>Developer Console</h1><p class="muted">Owner-only control center for teacher permissions and class-teacher assignments.</p></div><strong>Authorized developer</strong></div>
+</section>
+
+<section class="card">
+<h2>Give Teacher Access</h2>
+<div class="controls">
+<label>Teacher<select id="teacher"></select></label>
+<label>Work<select id="work"></select></label>
+<button id="grant">Give Access</button>
+<button id="remove" class="danger">Remove Access</button>
+</div>
+<div id="accessList"></div>
+</section>
+
+<section class="card">
+<h2>Class Teacher Assignment</h2>
+<div class="controls">
+<label>Teacher<select id="classTeacher"></select></label>
+<label>Class<select id="className"></select></label>
+<button id="assign">Make Class Teacher</button>
+</div>
+<div id="classList"></div>
+</section>
+
+
+
+<section class="card">
+<h2>Owner-controlled systems</h2>
+<div class="grid">
+  <div class="item"><div><b>Teacher Attendance Registry</b><div class="muted">Teachers cannot start registry attendance until the owner enables it.</div></div><button id="registryToggle">Loading…</button></div>
+  <div class="item"><div><b>Ajeet Seat Planning</b><div class="muted">Only Ajeet Sir can use Seat Planning after owner approval.</div></div><button id="seatToggle">Loading…</button></div>
+</div>
+</section>
+
+<section class="card">
+<h2>Owner Audit Log</h2>
+<div id="audit"></div>
+</section>
+</main>
+
+<script>
+async function api(url,opt={}){const r=await fetch(url,{credentials:"include",headers:{"Content-Type":"application/json"},...opt});const d=await r.json().catch(()=>({}));if(!r.ok)throw Error(d.error||"Request failed");return d}
+let teachers=[],works=[];
+async function load(){
+ try{
+  const systemState=await Promise.all([
+   api("/api/academic/teacher-registry?date="+new Date().toISOString().slice(0,10)),
+   api("/api/access/seat-planning")
+  ]);
+  const registryBtn=document.getElementById("registryToggle");
+  const seatBtn=document.getElementById("seatToggle");
+  registryBtn.textContent=systemState[0].enabled?"Disable registry":"Enable registry";
+  seatBtn.textContent=systemState[1].ownerAllowed?"Disable seat planning":"Enable seat planning";
+  registryBtn.onclick=async()=>{await api("/api/academic/teacher-registry/allow",{method:"POST",body:JSON.stringify({enabled:!systemState[0].enabled})});load()};
+  seatBtn.onclick=async()=>{await api("/api/access/seat-planning",{method:"POST",body:JSON.stringify({enabled:!systemState[1].ownerAllowed})});load()};
+  const classData=await api("/api/dashboard/classes");
+  className.innerHTML=classData.classes.map(c=>`<option value="${c.name}">${c.name}</option>`).join("");
+  [teachers,works]=await Promise.all([
+    api("/api/developer-console/teachers").then(x=>x.teachers),
+    api("/api/developer-console/works").then(x=>x.works)
+  ]);
+  const opts=teachers.map(t=>`<option value="${t.uid}">${t.name}</option>`).join("");
+  teacher.innerHTML=opts; classTeacher.innerHTML=opts;
+  work.innerHTML=works.map(w=>`<option value="${w[0]}">${w[1]}</option>`).join("");
+  const [a,c,l]=await Promise.all([
+   api("/api/developer-console/access"),
+   api("/api/developer-console/class-teachers"),
+   api("/api/developer-console/audit")
+  ]);
+  accessList.innerHTML=a.access.length?a.access.map(x=>`<div class="item"><span><b>${x.name}</b> (${x.uid})</span><span class="badge">${x.work_key}</span></div>`).join(""):"<p class='muted'>No work access assigned.</p>";
+  classList.innerHTML=c.assignments.length?c.assignments.map(x=>`<div class="item"><span><b>${x.class_name}</b> → ${x.name}</span><button class="danger" onclick="removeClassTeacher(${x.id})">Remove</button></div>`).join(""):"<p class='muted'>No class-teacher assignments.</p>";
+  audit.innerHTML=l.audit.length?l.audit.map(x=>`<div class="item"><span>${x.action}</span><span class="muted">${x.""} • ${new Date(x.created_at).toLocaleString()}</span></div>`).join(""):"<p class='muted'>No actions yet.</p>";
+ }catch(e){alert(e.message)}
+}
+grant.onclick=async()=>{try{await api("/api/developer-console/access",{method:"POST",body:JSON.stringify({teacher_uid:teacher.value,work_key:work.value,enabled:true})});load()}catch(e){alert(e.message)}};
+remove.onclick=async()=>{try{await api("/api/developer-console/access",{method:"POST",body:JSON.stringify({teacher_uid:teacher.value,work_key:work.value,enabled:false})});load()}catch(e){alert(e.message)}};
+assign.onclick=async()=>{try{await api("/api/developer-console/class-teacher",{method:"POST",body:JSON.stringify({teacher_uid:classTeacher.value,class_name:className.value})});load()}catch(e){alert(e.message)}};
+async function removeClassTeacher(id){try{await api("/api/developer-console/class-teacher/"+id,{method:"DELETE"});load()}catch(e){alert(e.message)}}
+load();
+</script>
+</body>
+</html>

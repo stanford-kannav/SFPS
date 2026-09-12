@@ -1,0 +1,11 @@
+node_modules/
+.env
+.env.*
+!.env.example
+*.log
+.netlify/
+.vercel/
+public/uploads/*
+!public/uploads/.gitkeep
+/var/
+data/runtime/

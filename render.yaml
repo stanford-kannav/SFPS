@@ -1,0 +1,35 @@
+services:
+  - type: web
+    name: sfps
+    runtime: node
+    plan: 0.5c-512mb
+    region: singapore
+    buildCommand: npm install --no-audit --no-fund
+    startCommand: npm start
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: 24.19.0
+      - key: NODE_ENV
+        value: production
+      - key: HOST
+        value: 0.0.0.0
+      - key: SFPS_DATA_DIR
+        value: /opt/render/project/src/.sfps-data/database
+      - key: SFPS_UPLOAD_DIR
+        value: /opt/render/project/src/.sfps-data/uploads/profiles
+      - key: SFPS_SESSION_SECRET
+        sync: false
+      - key: SFPS_OWNER_PASSWORD
+        sync: false
+      - key: SFPS_DIRECTOR_PASSWORD
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: GEMINI_MODEL
+        value: gemini-3.8-flash
+    disk:
+      name: sfps-data
+      mountPath: /opt/render/project/src/.sfps-data
+      sizeGB: 1

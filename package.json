@@ -1,0 +1,33 @@
+{
+  "name": "stanford-public-school",
+  "version": "32.3.1",
+  "private": true,
+  "description": "Stanford Public School management system with Node.js/Express, persistent JSON/XML/YAML file database, and Gemini-only YT AI. Render-ready.",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "db:init": "node src/db/init.js",
+    "db:check": "node src/db/check.js",
+    "db:seed": "node src/db/seed.js",
+    "db:reset": "node src/db/reset.js",
+    "test": "node scripts/smoke-test.js",
+    "db": "node src/db/check.js",
+    "db:import-excel": "node src/db/import-excel.js",
+    "verify": "node scripts/verify.js"
+  },
+  "dependencies": {
+    "cookie-parser": "^1.4.7",
+    "dotenv": "^17.2.1",
+    "express": "^5.1.0",
+    "express-rate-limit": "^8.0.1",
+    "helmet": "^8.1.0",
+    "pdfkit": "^0.17.2",
+    "xlsx": "^0.18.5",
+    "multer": "^2.0.2",
+    "@google/genai": "^2.22.0"
+  },
+  "engines": {
+    "node": ">=24 <25"
+  }
+}

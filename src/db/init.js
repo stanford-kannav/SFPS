@@ -1,0 +1,1 @@
+const db=require("./database");const x=db.init();console.log("SFPS database initialized:",x.engine);console.log("Formats:",x.formats.join(", "));console.log("Location:",x.path);

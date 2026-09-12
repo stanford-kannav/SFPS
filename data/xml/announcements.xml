@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<announcements>
+  <record>
+    <id>1</id>
+    <title>Welcome to SFPS</title>
+    <message>Stanford Public School management system is ready.</message>
+    <created_by>17</created_by>
+    <created_at>2026-08-25T11:51:34.077Z</created_at>
+  </record>
+</announcements>

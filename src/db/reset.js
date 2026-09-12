@@ -1,0 +1,1 @@
+const db=require("./database");const fs=require("fs");for(const t of db.TABLES) db.writeTable(t,[]);db.init();console.log("SFPS database reset complete.");

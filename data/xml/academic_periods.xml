@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<academic_periods>
+  <record>
+    <id>1</id>
+    <code>periodic_1</code>
+    <name>Periodic 1</name>
+    <order>1</order>
+    <start_date></start_date>
+    <end_date></end_date>
+    <created_at>2026-08-20T12:51:14.522Z</created_at>
+  </record>
+  <record>
+    <id>2</id>
+    <code>periodic_2</code>
+    <name>Periodic 2</name>
+    <order>2</order>
+    <start_date></start_date>
+    <end_date></end_date>
+    <created_at>2026-08-20T12:51:14.525Z</created_at>
+  </record>
+  <record>
+    <id>3</id>
+    <code>term_1</code>
+    <name>Term 1</name>
+    <order>3</order>
+    <start_date></start_date>
+    <end_date></end_date>
+    <created_at>2026-08-20T12:51:14.540Z</created_at>
+  </record>
+  <record>
+    <id>4</id>
+    <code>periodic_3</code>
+    <name>Periodic 3</name>
+    <order>4</order>
+    <start_date></start_date>
+    <end_date></end_date>
+    <created_at>2026-08-20T12:51:14.541Z</created_at>
+  </record>
+  <record>
+    <id>5</id>
+    <code>periodic_4</code>
+    <name>Periodic 4</name>
+    <order>5</order>
+    <start_date></start_date>
+    <end_date></end_date>
+    <created_at>2026-08-20T12:51:14.542Z</created_at>
+  </record>
+  <record>
+    <id>6</id>
+    <code>term_2_final</code>
+    <name>Term 2 (Final)</name>
+    <order>6</order>
+    <start_date></start_date>
+    <end_date></end_date>
+    <created_at>2026-08-20T12:51:14.543Z</created_at>
+  </record>
+</academic_periods>

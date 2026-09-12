@@ -1,0 +1,24 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#21160e"><title>SFPS · Dashboard</title><link rel="stylesheet" href="/css/app.css"><link rel="stylesheet" href="/css/responsive-v13.css">
+<link rel="stylesheet" href="/css/ui-clean-v14.css">
+</head><body>
+
+<button id="profileButton" class="profile-button" type="button" aria-expanded="false">
+  <span id="profileButtonAvatar" class="profile-avatar small">U</span>
+  <span class="profile-button-text"><strong id="profileButtonName">Profile</strong><small id="profileButtonRole">Account</small></span>
+  <span>⌄</span>
+</button>
+<div id="profileMenu" class="profile-menu" hidden>
+  <div class="profile-head"><div id="profileAvatar" class="profile-avatar">U</div><div><strong id="profileName">User</strong></div></div>
+  <p id="profileRole"></p>
+  <button id="profileLogout" type="button">Logout</button>
+</div>
+
+<div class="app"><aside class="sidebar" id="sidebar"><div class="side-brand"><img class="logo-img side" src="/logo.png" alt="Stanford Public School logo"><div><strong>STANFORD PUBLIC SCHOOL</strong><small>SFPS Management System</small></div></div><div class="school-chip">CBSE-style school administration · Secure role-based access</div><nav id="nav"></nav><div class="side-bottom"><div class="user-mini"><strong id="sideUser">Loading…</strong><span id="sideRole">SFPS account</span></div><button id="logout" class="logout">↪ &nbsp; Sign out</button></div></aside>
+<main class="content"><header class="topbar"><div class="top-left"><button class="mobile-menu" id="mobileMenu">☰</button><div><p class="eyebrow">Stanford Public School</p><h1 id="welcome">Dashboard</h1><p class="subtitle" id="pageSubtitle">Your school at a glance</p></div></div><div class="top-actions"><div class="search">⌕<input id="globalSearch" placeholder="Search students, staff…"></div><div id="userBadge" class="badge"></div></div></header>
+<section id="cards" class="cards"></section><section class="workspace"><div class="panel app-panel" id="mainPanel"><div id="tableArea"></div></div><div class="panel app-panel"><div class="panel-head"><div><h2>School notices</h2><p>Latest announcements and updates</p></div></div><div id="announcements"></div></div></section></main></div><script src="/js/dashboard.js"></script><script src="/js/yt.js"></script><script src="/js/profile.js"></script>
+<script src="/js/fast-tabs.js"></script>
+<script src="/js/attendance-fast.js"></script>
+<script src="/js/yt-fast.js"></script>
+<script src="/js/module-bootstrap-v14.js"></script>
+<script>window.addEventListener("sfps:teacher-auto-attendance",e=>{const d=e.detail||{};if(d.ok&&d.alreadyPresent===false){const n=document.createElement("div");n.className="sfps-auto-attendance-toast";n.textContent="Attendance recorded automatically.";document.body.appendChild(n);setTimeout(()=>n.remove(),4500);}});</script>
+</body></html>

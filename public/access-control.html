@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SFPS — Access Control</title>
+<link rel="stylesheet" href="/css/responsive-v13.css">
+<style>
+body{margin:0;background:#f4f7fb;font-family:system-ui,sans-serif;color:#16213a}
+header{padding:18px 20px;background:#fff;display:flex;justify-content:space-between;align-items:center;gap:12px}
+main{width:min(1200px,calc(100% - 28px));margin:24px auto}
+.card{background:#fff;border-radius:18px;padding:20px;margin-bottom:18px;box-shadow:0 8px 28px rgba(0,0,0,.07)}
+.controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;align-items:end}
+label{display:flex;flex-direction:column;gap:6px}select,button{min-height:44px;padding:9px 12px;border-radius:10px;border:1px solid #d7deea;background:#fff}button{cursor:pointer;background:#244b92;color:#fff;border:0}.danger{background:#a33}.muted{opacity:.68}.row{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:12px;border:1px solid #e1e6ef;border-radius:12px;margin-top:8px}
+</style>
+<link rel="stylesheet" href="/css/ui-clean-v14.css">
+</head>
+<body>
+<header><strong>SFPS • Teacher Access Control</strong><a href="/dashboard.html">Dashboard</a></header>
+<main>
+<section class="card">
+<h1>Teacher Access</h1>
+<p class="muted">Only the authorized developer can grant or remove teacher feature access.</p>
+<div class="controls">
+<label>Teacher<select id="teacher"></select></label>
+<label>Feature<select id="feature">
+<option value="syllabus">Syllabus</option>
+<option value="homework">Homework</option>
+<option value="attendance">Attendance</option>
+<option value="results">Results</option>
+<option value="fees">Fees</option>
+<option value="class_management">Class Management</option>
+</select></label>
+<button id="grant">Grant Access</button><button id="remove" class="danger">Remove Access</button>
+</div>
+</section>
+<section class="card"><h2>Current Grants</h2><div id="grants"></div></section>
+<section class="card"><h2>Seat Planning</h2><p class="muted">Seat Planning is reserved for <b>Ajeet Sir</b>. Owner approval is required before he can access it.</p><button id="seatToggle"></button></section>
+</main>
+<script>
+async function api(url,opt={}){const r=await fetch(url,{credentials:"include",headers:{"Content-Type":"application/json"},...opt});const d=await r.json().catch(()=>({}));if(!r.ok)throw Error(d.error||"Request failed");return d}
+async function load(){const [t,g,s]=await Promise.all([api("/api/access/teachers"),api("/api/access/grants"),api("/api/access/seat-planning")]);teacher.innerHTML=t.teachers.map(x=>`<option value="${x.uid}">${x.name} — ${x.uid}</option>`).join("");grants.innerHTML=g.grants.length?g.grants.map(x=>`<div class="row"><span><b>${x.name}</b> (${x.uid})</span><span>${x.feature_key}</span></div>`).join(""):"<p class='muted'>No grants.</p>";seatToggle.textContent=s.ownerAllowed?"Disable Seat Planning for Ajeet Sir":"Allow Seat Planning for Ajeet Sir";seatToggle.dataset.enabled=s.ownerAllowed}
+grant.onclick=async()=>{try{await api("/api/access/grant",{method:"POST",body:JSON.stringify({teacher_uid:teacher.value,feature_key:feature.value})});load()}catch(e){alert(e.message)}};
+remove.onclick=async()=>{try{await api("/api/access/grant",{method:"DELETE",body:JSON.stringify({teacher_uid:teacher.value,feature_key:feature.value})});load()}catch(e){alert(e.message)}};
+seatToggle.onclick=async()=>{try{await api("/api/access/seat-planning",{method:"POST",body:JSON.stringify({enabled:seatToggle.dataset.enabled!=="true"})});load()}catch(e){alert(e.message)}};
+load().catch(e=>alert(e.message));
+</script>
+</body></html>
